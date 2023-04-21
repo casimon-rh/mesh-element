@@ -1,0 +1,12 @@
+{{- if .Values.servicemesh.create }}
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "mesh-element.fullname" . }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  host: {{ include "mesh-element.fullname" . }}
+  subsets:
+    {{- toYaml .Values.servicemesh.subsets | nindent 4 }}
+{{- end }}

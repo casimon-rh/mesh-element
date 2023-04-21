@@ -1,0 +1,50 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ include "mesh-element.fullname" . }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: "{{ .Release.Namespace }}"
+        name: "{{ .Values.image.baseimage }}:{{ .Values.image.baseimagetag }}"
+  source:
+    type: Git
+    git:
+      uri: "{{ .Values.repo }}"
+  runPolicy: Serial
+{{- if .Values.runbuild }}
+---
+kind: Build
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ include "mesh-element.fullname" . }}-{{.Chart.AppVersion }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+  triggeredBy:
+    - message: Helm
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: "{{ .Release.Namespace }}"
+        name: "{{ .Values.image.baseimage }}:{{ .Values.image.baseimagetag }}"
+  source:
+    type: Git
+    git:
+      uri: "{{ .Values.repo }}"
+{{- end }}

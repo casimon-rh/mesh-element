@@ -1,0 +1,24 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: {{ .Values.image.repository }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+{{- if .Values.image.createbaseimage }}
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: "{{ .Values.image.baseimage }}"
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: "{{ .Values.image.baseimagetag }}"
+      from:
+        kind: DockerImage
+        name: "{{ .Values.image.baseimagerepo }}/{{ .Values.image.baseimage }}:{{ .Values.image.baseimagetag }}"
+{{- end }}

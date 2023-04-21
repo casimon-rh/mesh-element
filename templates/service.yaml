@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mesh-element.fullname" . }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: tcp-{{ .Values.service.port }}
+  selector:
+    {{- include "mesh-element.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,20 @@
+{{- if .Values.servicemesh.create }}
+{{- if .Values.servicemesh.gateway.create }}
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ include "mesh-element.fullname" . }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+      - {{ include "mesh-element.fullname" . }}-{{ .Release.Namespace }}{{.Values.wildcard}}
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+{{- end }}
+{{- end }}

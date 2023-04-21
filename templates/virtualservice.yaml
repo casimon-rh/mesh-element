@@ -1,0 +1,22 @@
+{{- if .Values.servicemesh.create }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "mesh-element.fullname" . }}
+  labels:
+    {{- include "mesh-element.labels" . | nindent 4 }}
+spec:
+{{- if .Values.servicemesh.gateway.create }}
+  gateways:
+  - {{ include "mesh-element.fullname" . }}
+  hosts:
+  - '*'
+{{- else}}
+  hosts:
+    - {{ include "mesh-element.fullname" . }}
+{{- end }}
+  http:
+    - route:
+        - destination:
+            host: {{ include "mesh-element.fullname" . }}
+{{- end }}

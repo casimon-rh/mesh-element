@@ -41,13 +41,10 @@ environment:
 - name: JUMPS
   value: '12'
 
-wildcard: .apps.cluster-z8d5f.z8d5f.sandbox658.opentlc.com
+wildcard: apps.cluster-7fldg.7fldg.sandbox1150.opentlc.com
 
 servicemesh:
-  create: true
+  create: false
   gateway:
-    create: true
-  subsets:
-  - labels:
-      version: v1
-    name: v1
+    create: false
+  subsets: []
